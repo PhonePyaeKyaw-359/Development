@@ -4,7 +4,7 @@ A responsive product catalog powered by the [DummyJSON Products API](https://dum
 
 ## Run locally
 
-Open `index.html` in a browser, or serve this folder with any static file server. The browser needs an internet connection to load the catalog and product images.
+Serve this folder over HTTP; do not open `index.html` as a `file://` URL because browsers can block API requests from local files. In VS Code, right-click `index.html` and choose **Open with Live Server**. The browser needs an internet connection to load products and images from DummyJSON.
 
 ## Deploy with Vercel
 
@@ -15,4 +15,4 @@ Open `index.html` in a browser, or serve this folder with any static file server
 
 ## Product changes
 
-The app calls DummyJSON's POST, PUT, and DELETE product endpoints. DummyJSON simulates these writes and does not change its shared server data. To make catalog edits visible on the same browser after refresh, this app saves them in that browser's local storage. They are not shared with other visitors or devices.
+The app loads the complete catalog from `GET https://dummyjson.com/products?limit=0` and uses DummyJSON's `POST /products/add`, `PUT /products/{id}`, and `DELETE /products/{id}` endpoints for create, update, and delete. DummyJSON simulates writes and does not change its shared server data. This app stores the resulting changes in the current browser's local storage so they remain visible there after refresh. They are not shared with other visitors or devices.
