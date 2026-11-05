@@ -1,26 +1,29 @@
 # Fieldwork Store
 
-A responsive two-sided storefront prototype powered by DummyJSON. Customers browse the shop, add products to a bag, and submit a demo checkout. Admins manage the catalog from the separate admin page.
+A static storefront and admin prototype powered by DummyJSON. The customer shop, product CRUD dashboard, and purchase activity page each have their own folder and HTML, CSS, and JavaScript files.
 
-## Pages
+## Project structure
 
-- `shop.html` — customer storefront, bag, and demo checkout
-- `index.html` — admin product catalog with create, read, update, and delete controls
+- `shop/` — customer storefront, DummyJSON sign-in, shopping bag, and demo checkout (`index.html`, `shop.css`, `shop.js`)
+- `admin/` — product management dashboard (`index.html`, `admin.css`, `admin.js`)
+- `admin/purchases/` — customer purchase activity view (`index.html`, `purchases.css`, `purchases.js`)
+- Root `index.html` forwards visitors to the storefront.
 
 ## Run locally
 
-Serve this folder over HTTP. In VS Code, right-click `shop.html` or `index.html` and choose **Open with Live Server**. Do not open a page as a `file://` URL; browsers can block its API requests. An internet connection is needed for DummyJSON products and images.
+Serve the project folder over HTTP. In VS Code, open the root `index.html` with Live Server. From the app navigation, customers go to **Shop**; administrators can open **Products** or **Purchases**. Do not open files as `file://` URLs because browsers can block API requests. An internet connection is needed for DummyJSON products and images.
 
 ## DummyJSON endpoints
 
 - Product catalog: `GET https://dummyjson.com/products?limit=0`
-- Create product (admin): `POST https://dummyjson.com/products/add`
-- Update product (admin): `PUT https://dummyjson.com/products/{id}`
-- Delete product (admin): `DELETE https://dummyjson.com/products/{id}`
-- Submit demo bag (shop): `POST https://dummyjson.com/carts/add`
+- Create, update, delete products (admin): `POST /products/add`, `PUT /products/{id}`, `DELETE /products/{id}`
+- Customer sign-in (shop): `POST https://dummyjson.com/auth/login`; verify current session with `GET https://dummyjson.com/auth/me`
+- Demo checkout (shop): `POST https://dummyjson.com/carts/add` with the signed-in user's ID and product quantities
+- Purchase activity (admin): `GET https://dummyjson.com/carts?limit=0`
+- Customer details for carts: `GET https://dummyjson.com/users?limit=0`
 
-DummyJSON simulates add, update, delete, and cart writes; it does not save them to its shared server data. Admin changes are overlaid in browser local storage, the shop bag is stored in local storage, and demo order summaries are stored in local storage. They are only available in the browser that created them. Checkout sends product IDs and quantities to DummyJSON's mock cart endpoint; the name and email entered in the demo checkout form are only used for form validation and are not transmitted or saved. No payment is collected.
+The Purchases page joins each cart's `userId` to the DummyJSON users list and displays the customer and purchased products. The shop signs customers in through DummyJSON Auth; a **Use demo login** button fills the public example account from the [DummyJSON auth docs](https://dummyjson.com/docs/auth). Checkout verifies that user and submits the user's ID and product quantities to DummyJSON Carts. DummyJSON's cart, product, and checkout writes are simulated; the shared API data does not change. The admin overlays product edits in browser local storage, and the shop stores the bag and demo order locally. The Purchases page can read demo orders from the same browser and site origin, while its API sample carts are shared test data. Local data is not shared across visitors or devices. No payment is collected.
 
 ## Deploy
 
-This is a static site with no build step. Deploy the project folder as the site root. Both `index.html` and `shop.html` are standalone static pages, so the hosting platform should serve each file directly.
+This is a static site with no build step. Deploy the project folder as the site root. The host should serve the root `index.html` and each folder's `index.html` directly.

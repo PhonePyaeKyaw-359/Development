@@ -6,10 +6,11 @@
   const CATALOG_KEY = 'fieldwork-catalog-v2';
   const CART_KEY = 'fieldwork-shop-cart-v1';
   const ORDER_KEY = 'fieldwork-demo-orders-v1';
+  const USER_KEY = 'fieldwork-current-user-v1';
   const FREE_SHIPPING_AT = 75;
   const SHIPPING_FEE = 6.95;
   const PAGE_SIZE = 16;
-  const state = { products: [], categories: [], query: '', category: 'all', sort: 'featured', shown: PAGE_SIZE, cart: [], loading: true };
+  const state = { products: [], categories: [], query: '', category: 'all', sort: 'featured', shown: PAGE_SIZE, cart: [], user: null, loading: true };
   const $ = (selector, root = document) => root.querySelector(selector);
   const grid = $('#store-grid');
   const toast = $('#store-toast');
@@ -22,6 +23,14 @@
   function notify(message) { toast.textContent = message; toast.classList.add('show'); clearTimeout(toastTimer); toastTimer = setTimeout(() => toast.classList.remove('show'), 2800); }
   function safeRead(key, fallback) { try { const value = JSON.parse(localStorage.getItem(key) || 'null'); return value ?? fallback; } catch { return fallback; } }
   function safeWrite(key, value) { try { localStorage.setItem(key, JSON.stringify(value)); return true; } catch { notify('Your browser storage is full.'); return false; } }
+  state.user = safeRead(USER_KEY, null);
+  function renderAccount() {
+    const button = $('#account-action');
+    button.classList.toggle('signed-in', Boolean(state.user));
+    button.textContent = state.user ? `Hi, ${state.user.firstName || state.user.username}` : 'Sign in';
+    button.title = state.user ? 'Click to sign out' : 'Sign in with a DummyJSON user';
+    button.setAttribute('aria-label', state.user ? `Signed in as ${state.user.firstName || state.user.username}. Click to sign out.` : 'Sign in');
+  }
   function apiRequest(url, options = {}) {
     return fetch(url, options).then(async response => {
       if (!response.ok) throw new Error(`DummyJSON returned ${response.status}`);
@@ -162,6 +171,15 @@
   function openCart() { renderCart(); $('#cart-drawer').showModal(); }
   function openCheckout() {
     if (!state.cart.length) return;
+    if (!state.user?.id || !state.user?.accessToken) {
+      $('#cart-drawer').close();
+      $('#auth-modal').showModal();
+      notify('Sign in first so the order is linked to your user profile.');
+      return;
+    }
+    const customerName = `${state.user.firstName || ''} ${state.user.lastName || ''}`.trim() || state.user.username;
+    const initials = customerName.split(/\s+/).map(part => part[0]).slice(0,2).join('').toUpperCase();
+    $('#checkout-customer').innerHTML = `<span class="checkout-avatar">${escapeHtml(initials)}</span><div><div class="checkout-user-name">Order for ${escapeHtml(customerName)}</div><div class="checkout-user-email">${escapeHtml(state.user.email || state.user.username)}</div></div>`;
     $('#checkout-total').textContent = money(cartSubtotal() + (cartSubtotal() >= FREE_SHIPPING_AT ? 0 : SHIPPING_FEE));
     $('#checkout-item-count').textContent = `${cartQuantity()} ${cartQuantity() === 1 ? 'item' : 'items'}`;
     $('#cart-drawer').close();
@@ -170,6 +188,7 @@
   async function placeOrder(event) {
     event.preventDefault();
     if (!event.currentTarget.reportValidity() || !state.cart.length) return;
+    if (!state.user?.id || !state.user?.accessToken) { $('#checkout-modal').close(); $('#auth-modal').showModal(); return; }
     const button = $('#place-order');
     button.disabled = true; button.innerHTML = 'Placing your demo order…';
     const products = state.cart.map(item => {
@@ -177,16 +196,52 @@
       return { id: Number(product?.apiId || product?.id), quantity: Number(item.quantity) };
     });
     try {
-      const response = await apiRequest(`${CARTS_API}/add`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ userId: 1, products }) });
-      const total = cartSubtotal() + (cartSubtotal() >= FREE_SHIPPING_AT ? 0 : SHIPPING_FEE);
-      const order = { id: response.id, date: new Date().toISOString(), quantity: cartQuantity(), total, apiCart: response };
+      const verifiedUser = await apiRequest('https://dummyjson.com/auth/me', { headers: { Authorization: `Bearer ${state.user.accessToken}` } });
+      if (Number(verifiedUser.id) !== Number(state.user.id)) throw new Error('Your session changed. Please sign in again.');
+      const response = await apiRequest(`${CARTS_API}/add`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ userId: state.user.id, products }) });
+      const subtotal = cartSubtotal();
+      const shipping = subtotal >= FREE_SHIPPING_AT ? 0 : SHIPPING_FEE;
+      const total = subtotal + shipping;
+      const order = { id: Date.now(), apiCartId: response.id, date: new Date().toISOString(), quantity: cartQuantity(), subtotal, shipping, total, apiCart: response };
       const orders = safeRead(ORDER_KEY, []); orders.push(order); safeWrite(ORDER_KEY, orders);
       state.cart = []; safeWrite(CART_KEY, []); render(); renderCart();
       $('#checkout-modal').close();
-      $('#success-message').textContent = `Your demo order #${response.id} is confirmed. ${order.quantity} ${order.quantity === 1 ? 'item' : 'items'} · ${money(total)}.`;
+      $('#success-message').textContent = `${customerNameFor(state.user)} · demo order #${response.id} · ${order.quantity} ${order.quantity === 1 ? 'item' : 'items'} · ${money(total)}.`;
       $('#success-modal').showModal();
     } catch (error) { notify(`${error.message} Your bag is still here.`); }
     finally { button.disabled = false; button.innerHTML = 'Place demo order <span>↗</span>'; }
+  }
+
+  function customerNameFor(user) { return `${user.firstName || ''} ${user.lastName || ''}`.trim() || user.username; }
+  async function signIn(event) {
+    event.preventDefault();
+    if (!event.currentTarget.reportValidity()) return;
+    const button = $('#sign-in');
+    button.disabled = true;
+    button.textContent = 'Signing in…';
+    $('#auth-error').textContent = '';
+    try {
+      const result = await apiRequest('https://dummyjson.com/auth/login', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ username: $('#auth-username').value.trim(), password: $('#auth-password').value, expiresInMins: 60 }) });
+      if (!result.accessToken || !result.id) throw new Error('The response did not include an active user session.');
+      state.user = { id: result.id, username: result.username, firstName: result.firstName, lastName: result.lastName, email: result.email, image: result.image, accessToken: result.accessToken, refreshToken: result.refreshToken };
+      safeWrite(USER_KEY, state.user);
+      renderAccount();
+      $('#auth-password').value = '';
+      $('#auth-modal').close();
+      notify(`Welcome, ${state.user.firstName || state.user.username}.`);
+    } catch (error) { $('#auth-error').textContent = `${error.message} Check the username and password.`; }
+    finally { button.disabled = false; button.innerHTML = 'Sign in with DummyJSON <span>↗</span>'; }
+  }
+  function accountAction() {
+    if (state.user) {
+      if (!window.confirm(`Sign out ${state.user.firstName || state.user.username}?`)) return;
+      state.user = null;
+      localStorage.removeItem(USER_KEY);
+      renderAccount();
+      notify('You are signed out.');
+      return;
+    }
+    $('#auth-modal').showModal();
   }
 
   state.cart = safeRead(CART_KEY, []);
@@ -197,6 +252,9 @@
   $('#store-load-more').addEventListener('click', () => { state.shown += PAGE_SIZE; render(); });
   $('#reset-store').addEventListener('click', () => { state.category = 'all'; state.query = ''; $('#store-search').value = ''; render(); });
   $('#open-cart').addEventListener('click', openCart);
+  $('#account-action').addEventListener('click', accountAction);
+  $('#auth-form').addEventListener('submit', signIn);
+  $('#fill-demo').addEventListener('click', () => { $('#auth-username').value = 'emilys'; $('#auth-password').value = 'emilyspass'; });
   $('#checkout-open').addEventListener('click', openCheckout);
   $('#checkout-form').addEventListener('submit', placeOrder);
   $('#continue-shopping').addEventListener('click', () => $('#success-modal').close());
@@ -222,5 +280,6 @@
     if (event.key === 'Enter' && event.target.matches('.shop-title')) openDetails(findProduct(event.target.dataset.id));
   });
   renderCart();
+  renderAccount();
   loadProducts();
 })();

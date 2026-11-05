@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#0b0b0c" />
+    <meta name="description" content="Browse and manage the product catalog." />
+    <title>Admin catalog — Fieldwork</title>
+    <link rel="preconnect" href="https://dummyjson.com" />
+    <link rel="preconnect" href="https://cdn.dummyjson.com" />
+    <link rel="stylesheet" href="./admin.css" />
+    <script src="./admin.js" defer></script>
+  </head>
+  <body>
+    <header class="topbar">
+      <a class="brand" href="../shop/" aria-label="Fieldwork shop"><span class="brand-icon">f</span><span>fieldwork<span class="brand-dot">.</span></span></a>
+      <nav class="main-nav" aria-label="Main navigation"><a href="../shop/">Shop</a><a class="active" href="./index.html" aria-current="page">Products</a><a href="./purchases/">Purchases</a></nav>
+      <a class="api-status" href="https://dummyjson.com/docs/products" target="_blank" rel="noreferrer"><span class="api-dot"></span> Connected to DummyJSON <span aria-hidden="true">↗</span></a>
+    </header>
+
+    <main class="page" id="top">
+      <section class="page-heading">
+        <div><p class="overline">INVENTORY <span>/</span> PRODUCTS</p><h1>Product catalog</h1><p class="page-subtitle">Browse your products and keep your collection up to date.</p></div>
+        <button class="primary-button" id="add-product" type="button"><span class="plus-icon">＋</span> Add product</button>
+      </section>
+
+      <section class="summary-row" aria-label="Catalog summary">
+        <div class="summary-card"><span class="summary-icon icon-indigo">▦</span><div><span class="summary-label">Products</span><strong id="summary-products">—</strong></div></div>
+        <div class="summary-card"><span class="summary-icon icon-amber">◈</span><div><span class="summary-label">Categories</span><strong id="summary-categories">—</strong></div></div>
+        <div class="summary-card"><span class="summary-icon icon-green">★</span><div><span class="summary-label">Average rating</span><strong id="summary-rating">—</strong></div></div>
+        <div class="summary-card"><span class="summary-icon icon-coral">$</span><div><span class="summary-label">Average price</span><strong id="summary-price">—</strong></div></div>
+      </section>
+
+      <section class="catalog-panel" aria-labelledby="catalog-title">
+        <div class="catalog-heading"><div><h2 id="catalog-title">All products <span class="heading-count" id="heading-count">—</span></h2><p>Manage product details, availability and pricing.</p></div><button class="refresh-button" id="refresh-products" type="button" title="Refresh products"><span aria-hidden="true">↻</span> Refresh</button></div>
+        <div class="toolbar">
+          <label class="search-control"><span aria-hidden="true">⌕</span><input id="search-input" type="search" placeholder="Search products, brands…" autocomplete="off" /><kbd>⌘ K</kbd></label>
+          <div class="toolbar-end"><label class="select-control"><span>Category</span><select id="category-select"><option value="all">All categories</option></select></label><label class="select-control"><span>Sort by</span><select id="sort-select"><option value="featured">Featured</option><option value="title-asc">Name: A–Z</option><option value="price-asc">Price: low to high</option><option value="price-desc">Price: high to low</option><option value="rating-desc">Top rated</option></select></label></div>
+        </div>
+        <div class="catalog-meta"><span id="result-count">Connecting to DummyJSON…</span><span class="api-source"><span class="api-dot"></span> Live catalog</span></div>
+        <div class="product-grid" id="product-grid" aria-live="polite" aria-busy="true"></div>
+        <div class="empty-state hidden" id="empty-state"><div class="empty-icon">⌕</div><h3>No products found</h3><p>Try another search or category.</p><button class="secondary-button" id="clear-filters" type="button">Clear filters</button></div>
+        <div class="catalog-footer"><span id="page-count"></span><button class="secondary-button hidden" id="load-more" type="button">Load more products <span aria-hidden="true">↓</span></button></div>
+      </section>
+      <p class="data-note"><span>ⓘ</span> Data provided by DummyJSON. Product changes are simulated by the API and saved in this browser only.</p>
+    </main>
+
+    <dialog class="dialog detail-dialog" id="product-dialog" aria-labelledby="detail-title"><button class="dialog-x" type="button" aria-label="Close dialog">×</button><div id="dialog-content"></div></dialog>
+    <dialog class="dialog form-dialog" id="form-dialog" aria-labelledby="form-title"><button class="dialog-x" type="button" aria-label="Close dialog">×</button><div class="form-header"><p class="overline">PRODUCT DETAILS</p><h2 id="form-title">Add product</h2><p>Fill in the details below to update your catalog.</p></div><form id="product-form" novalidate><input type="hidden" id="product-id" /><div class="form-grid"><label class="field full-field">Product name <span class="required">*</span><input id="product-title" name="title" required maxlength="100" placeholder="e.g. Ceramic coffee mug" /></label><label class="field">Price <span class="required">*</span><span class="price-input"><span>$</span><input id="product-price" name="price" type="number" required min="0" step="0.01" placeholder="24.00" /></span></label><label class="field">Category <span class="required">*</span><input id="product-category" name="category" required maxlength="50" placeholder="home-decor" /></label><label class="field">Brand<input id="product-brand" name="brand" maxlength="60" placeholder="Brand name" /></label><label class="field">Stock<input id="product-stock" name="stock" type="number" min="0" step="1" placeholder="0" /></label><label class="field full-field">Image URL<input id="product-image" name="image" type="url" placeholder="https://example.com/product.jpg" /></label><label class="field full-field">Description<textarea id="product-description" name="description" rows="4" maxlength="700" placeholder="Describe the product…"></textarea></label><label class="field full-field">Tags <span class="field-hint">Separate with commas</span><input id="product-tags" name="tags" placeholder="home, ceramic, handmade" /></label></div><p class="form-error" id="form-error" role="alert"></p><div class="form-actions"><button class="secondary-button" id="cancel-form" type="button">Cancel</button><button class="primary-button" id="save-product" type="submit">Save product</button></div></form></dialog>
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+    <footer class="site-footer"><span class="brand-icon small-brand">f</span><span>Fieldwork inventory</span><span class="footer-separator">·</span><span>Powered by DummyJSON</span></footer>
+  </body>
+</html>
