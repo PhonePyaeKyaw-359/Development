@@ -1,11 +1,51 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-</head>
-<body>
-    
-</body>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#f6f7f4" />
+    <meta name="description" content="A considered catalog of everyday essentials." />
+    <title>Form &amp; Field — Product catalog</title>
+    <link rel="preconnect" href="https://dummyjson.com" />
+    <link rel="preconnect" href="https://cdn.dummyjson.com" />
+    <link rel="stylesheet" href="/styles.css" />
+    <script src="/app.js" defer></script>
+  </head>
+  <body>
+    <header class="topbar">
+      <a class="brand" href="#top" aria-label="Form and Field home"><span class="brand-mark">f.</span><span>form <i>&amp;</i> field</span></a>
+      <nav class="topnav" aria-label="Main navigation"><a class="nav-link active" href="#catalog">Catalog</a><a class="nav-link" href="#about">About</a></nav>
+      <div class="topbar-note"><span class="live-dot"></span> A little more intentional</div>
+    </header>
+
+    <main id="top">
+      <section class="hero" aria-labelledby="hero-title">
+        <div class="hero-copy"><p class="eyebrow"><span class="eyebrow-line"></span> THE EVERYDAY EDIT&nbsp; / &nbsp;NO. 01</p><h1 id="hero-title">Good things,<br /><em>thoughtfully found.</em></h1><p class="hero-description">Considered essentials for the spaces you live in and the days you move through.</p><a class="hero-cta" href="#catalog">Explore the collection <span aria-hidden="true">↘</span></a></div>
+        <div class="hero-art" aria-label="Still life of selected essentials">
+          <div class="art-sun"></div><div class="art-orbit orbit-one"></div><div class="art-orbit orbit-two"></div>
+          <div class="art-card art-card-back"><img src="https://cdn.dummyjson.com/products/images/furniture/Annibale%20Colombo%20Bed/1.png" alt="" /></div>
+          <div class="art-card art-card-front"><img src="https://cdn.dummyjson.com/products/images/beauty/Red%20Lipstick/1.png" alt="" /></div>
+          <span class="art-label label-top">OBJECTS WITH PURPOSE</span><span class="art-label label-bottom">EST. FOR EVERYDAY LIVING&nbsp; · &nbsp;2024</span>
+          <div class="art-spark spark-one">✳</div><div class="art-spark spark-two">✳</div>
+        </div>
+        <div class="hero-index"><span>01</span><span class="index-rule"></span><span>04</span></div>
+      </section>
+
+      <section class="catalog-section" id="catalog" aria-labelledby="catalog-title">
+        <div class="section-heading"><div><p class="eyebrow"><span class="eyebrow-line"></span> THE COLLECTION</p><h2 id="catalog-title">Find your <em>favourite.</em></h2></div><button class="add-button" id="add-product" type="button"><span>＋</span> Add a product</button></div>
+        <div class="catalog-toolbar"><div class="filters" id="category-filters" aria-label="Filter by category"><button class="filter-chip selected" data-category="all" type="button">All pieces <span class="chip-count" id="all-count">—</span></button></div><label class="search-box"><span class="search-icon" aria-hidden="true">⌕</span><input id="search-input" type="search" placeholder="Search the collection" autocomplete="off" /><kbd>⌘ K</kbd></label></div>
+        <div class="result-line"><span id="result-count">Loading collection</span><label for="sort-select">Sort by <select id="sort-select"><option value="featured">Featured</option><option value="title-asc">Name: A–Z</option><option value="price-asc">Price: low to high</option><option value="price-desc">Price: high to low</option><option value="rating-desc">Top rated</option></select></label></div>
+        <div class="product-grid" id="product-grid" aria-live="polite"></div>
+        <div class="empty-state hidden" id="empty-state"><span>⌕</span><h3>Nothing found just yet</h3><p>Try a different search or category.</p><button class="text-button" id="clear-filters" type="button">Clear filters ↗</button></div>
+        <div class="load-more-wrap"><button id="load-more" class="load-more hidden" type="button">Load more pieces <span>↓</span></button></div>
+      </section>
+
+      <section class="manifesto" id="about"><span class="manifesto-star">✳</span><p>Good design makes room for<br /><em>the good in every day.</em></p><span class="manifesto-caption">A SMALL COLLECTION FOR A LIFE WELL LIVED.</span></section>
+    </main>
+    <footer class="footer"><a class="brand footer-brand" href="#top"><span class="brand-mark">f.</span><span>form <i>&amp;</i> field</span></a><span>Thoughtfully found, for every day.</span><span>© <span id="year"></span> Form &amp; Field</span></footer>
+
+    <dialog class="product-dialog" id="product-dialog" aria-labelledby="dialog-title"><button class="dialog-close" type="button" aria-label="Close dialog">×</button><div id="dialog-content"></div></dialog>
+    <dialog class="form-dialog" id="form-dialog" aria-labelledby="form-title"><button class="dialog-close" type="button" aria-label="Close dialog">×</button><p class="eyebrow"><span class="eyebrow-line"></span> THE COLLECTION</p><h2 id="form-title">Add a <em>piece.</em></h2><form id="product-form"><input type="hidden" id="product-id" /><label>Product name<input id="product-title" name="title" required maxlength="90" placeholder="e.g. Everyday ceramic mug" /></label><div class="form-row"><label>Price <span class="input-with-prefix"><span>$</span><input id="product-price" name="price" type="number" required min="0" step="0.01" placeholder="24.00" /></span></label><label>Category<input id="product-category" name="category" required maxlength="40" placeholder="home, beauty…" /></label></div><label>Description<textarea id="product-description" name="description" rows="3" maxlength="400" placeholder="A few words about this piece…"></textarea></label><label>Image URL <span class="optional">optional</span><input id="product-image" name="image" type="url" placeholder="https://…" /></label><div class="form-actions"><button class="form-cancel" type="button">Cancel</button><button class="add-button" type="submit" id="save-product">Save product <span>↗</span></button></div></form></dialog>
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  </body>
 </html>
