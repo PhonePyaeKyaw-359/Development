@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#0b0b0c" />
+    <meta name="description" content="Shop thoughtful everyday essentials at Fieldwork." />
+    <title>Fieldwork — Shop thoughtfully</title>
+    <link rel="preconnect" href="https://dummyjson.com" />
+    <link rel="preconnect" href="https://cdn.dummyjson.com" />
+    <link rel="stylesheet" href="./shop.css" />
+    <script src="./shop.js" defer></script>
+  </head>
+  <body>
+    <div class="announcement"><span>GOOD THINGS, HERE FOR EVERY DAY.</span><span>FREE SHIPPING ON ORDERS OVER $75 <i>↗</i></span></div>
+    <header class="shop-header">
+      <a class="shop-brand" href="./shop.html"><span class="brand-symbol">f</span> fieldwork<span class="brand-period">.</span></a>
+      <nav class="shop-nav" aria-label="Main navigation"><a class="active" href="./shop.html" aria-current="page">Shop</a><a href="#new-arrivals">New arrivals</a><a href="#our-edit">Our edit</a></nav>
+      <div class="header-actions"><a class="admin-link" href="./index.html">Admin <span>↗</span></a><button class="bag-button" id="open-cart" type="button" aria-label="Open shopping bag">Bag <span id="bag-count">0</span><span class="bag-icon">↗</span></button></div>
+    </header>
+
+    <main>
+      <section class="shop-hero" id="our-edit">
+        <div class="hero-copy"><span class="hero-kicker"><span class="kicker-dot"></span> THE EVERYDAY EDIT · VOL. 01</span><h1>Make room for<br />good <em>things.</em></h1><p>Well-made finds for the everyday. Thoughtful essentials for the way you live, work and unwind.</p><a class="hero-button" href="#new-arrivals">Shop the collection <span>↘</span></a><span class="hero-note">A SMALL EDITION OF VERY GOOD THINGS.</span></div>
+        <div class="hero-visual"><div class="hero-image-main" id="hero-image-main"><span class="hero-image-placeholder">FIELDWORK · EVERYDAY OBJECTS</span></div><div class="hero-image-small" id="hero-image-small"></div><div class="hero-seal"><span>F</span><small>MADE FOR<br />EVERYDAY</small></div><span class="hero-visual-index">FW—001&nbsp;&nbsp; / &nbsp;&nbsp;OBJECTS TO KEEP</span></div>
+        <div class="hero-side-text">OBJECTS FOR<br />A LIFE WELL LIVED</div>
+      </section>
+
+      <section class="benefit-strip" aria-label="Shopping benefits"><div><span>✳</span> Considered everyday essentials</div><div><span>↗</span> Easy, thoughtful gifting</div><div><span>◉</span> Secure demo checkout</div></section>
+
+      <section class="collection" id="new-arrivals">
+        <div class="collection-top"><div><span class="section-kicker">A LITTLE OF EVERYTHING</span><h2>Good finds, <em>right this way.</em></h2><p>Useful things. Well chosen. Made to feel right at home.</p></div><label class="store-search"><span>⌕</span><input id="store-search" type="search" placeholder="Find something good…" /><kbd>⌘ K</kbd></label></div>
+        <div class="category-bar"><div class="category-tabs" id="category-tabs" aria-label="Filter products"><button type="button" class="category-tab active" data-category="all">All things <span>—</span></button></div><label class="store-sort"><span>Sort</span><select id="store-sort"><option value="featured">Featured</option><option value="title-asc">Name: A–Z</option><option value="price-asc">Price: low to high</option><option value="price-desc">Price: high to low</option><option value="rating-desc">Top rated</option></select></label></div>
+        <div class="store-status"><span id="store-count">Finding the good stuff…</span><span><i class="live-indicator"></i> THE FIELDWORK EDIT</span></div>
+        <div class="store-grid" id="store-grid" aria-live="polite" aria-busy="true"></div>
+        <div class="store-empty hidden" id="store-empty"><span>⌕</span><h3>Nothing on this shelf</h3><p>Try a different search or browse everything.</p><button class="underlined-button" id="reset-store" type="button">Show all products ↗</button></div>
+        <div class="store-load"><button class="load-button hidden" id="store-load-more" type="button">Load more finds <span>↓</span></button></div>
+      </section>
+
+      <section class="closing-note"><span class="closing-star">✳</span><p>Buy less, choose well,<br /><em>make it yours.</em></p><span>FIELDWORK · THOUGHTFULLY FOUND</span></section>
+    </main>
+
+    <footer class="shop-footer"><a class="shop-brand" href="./shop.html"><span class="brand-symbol">f</span> fieldwork<span class="brand-period">.</span></a><span>Good things for every day.</span><span>© <span id="year"></span> FIELDWORK</span></footer>
+
+    <dialog class="store-dialog detail-modal" id="store-detail"><button class="modal-close" type="button" aria-label="Close">×</button><div id="store-detail-content"></div></dialog>
+    <dialog class="cart-drawer" id="cart-drawer" aria-labelledby="cart-title"><div class="drawer-head"><div><span class="section-kicker">YOUR EVERYDAY EDIT</span><h2 id="cart-title">Your bag <span id="drawer-count">(0)</span></h2></div><button class="modal-close static-close" type="button" aria-label="Close bag">×</button></div><div class="cart-lines" id="cart-lines"></div><div class="cart-bottom"><div class="shipping-message" id="shipping-message"></div><div class="shipping-meter"><span id="shipping-progress"></span></div><div class="cart-totals"><div><span>Subtotal</span><strong id="cart-subtotal">$0.00</strong></div><div><span>Shipping</span><strong id="cart-shipping">Calculated at checkout</strong></div><div class="cart-total"><span>Total</span><strong id="cart-total">$0.00</strong></div></div><button class="checkout-button" id="checkout-open" type="button">Continue to checkout <span>↗</span></button><p class="checkout-note">Demo checkout · no payment is collected</p></div></dialog>
+    <dialog class="store-dialog checkout-modal" id="checkout-modal" aria-labelledby="checkout-title"><button class="modal-close" type="button" aria-label="Close">×</button><div class="checkout-head"><span class="section-kicker">ALMOST YOURS</span><h2 id="checkout-title">A few details,<br /><em>then it's yours.</em></h2><p>This is a demo checkout. No payment or personal information is collected.</p></div><form id="checkout-form"><label>Your name<input name="name" required autocomplete="name" placeholder="Alex Morgan" /></label><label>Email address<input name="email" required type="email" autocomplete="email" placeholder="alex@example.com" /></label><div class="checkout-summary"><span id="checkout-item-count">0 items</span><strong id="checkout-total">$0.00</strong></div><button class="checkout-button" id="place-order" type="submit">Place demo order <span>↗</span></button><p class="checkout-note">Order details are sent to DummyJSON's mock cart endpoint.</p></form></dialog>
+    <dialog class="store-dialog success-modal" id="success-modal" aria-labelledby="success-title"><span class="success-mark">✓</span><span class="section-kicker">ORDER RECEIVED</span><h2 id="success-title">Good things<br /><em>are on their way.</em></h2><p id="success-message">Your demo order is confirmed.</p><button class="checkout-button" id="continue-shopping" type="button">Back to the good stuff <span>↗</span></button></dialog>
+    <div class="store-toast" id="store-toast" role="status" aria-live="polite"></div>
+  </body>
+</html>

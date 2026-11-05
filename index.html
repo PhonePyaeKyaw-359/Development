@@ -3,19 +3,20 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="theme-color" content="#f4f6f5" />
+    <meta name="theme-color" content="#0b0b0c" />
     <meta name="description" content="Browse and manage the product catalog." />
-    <title>Products — Fieldwork</title>
+    <title>Admin catalog — Fieldwork</title>
     <link rel="preconnect" href="https://dummyjson.com" />
     <link rel="preconnect" href="https://cdn.dummyjson.com" />
     <link rel="stylesheet" href="./styles.css" />
+    <link rel="stylesheet" href="./theme.css" />
     <script src="./app.js" defer></script>
   </head>
   <body>
     <header class="topbar">
-      <a class="brand" href="#top" aria-label="Fieldwork home"><span class="brand-icon">f</span><span>fieldwork<span class="brand-dot">.</span></span></a>
-      <div class="topbar-center"><span class="status-dot"></span> Store workspace <span class="topbar-divider">/</span> Product catalog</div>
-      <a class="api-status" href="https://dummyjson.com/docs/products" target="_blank" rel="noreferrer"><span class="api-dot"></span> DummyJSON API <span aria-hidden="true">↗</span></a>
+      <a class="brand" href="./shop.html" aria-label="Fieldwork shop"><span class="brand-icon">f</span><span>fieldwork<span class="brand-dot">.</span></span></a>
+      <nav class="main-nav" aria-label="Main navigation"><a href="./shop.html">Shop</a><a class="active" href="./index.html" aria-current="page">Admin</a></nav>
+      <a class="api-status" href="https://dummyjson.com/docs/products" target="_blank" rel="noreferrer"><span class="api-dot"></span> Connected to DummyJSON <span aria-hidden="true">↗</span></a>
     </header>
 
     <main class="page" id="top">
